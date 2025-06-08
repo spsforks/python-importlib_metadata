@@ -803,6 +803,7 @@ class FastPath:
     True
     """
 
+    # The following cache is cleared at fork, see os.register_at_fork below
     @functools.lru_cache()  # type: ignore[misc]
     def __new__(cls, root):
         return super().__new__(cls)
@@ -842,6 +843,10 @@ class FastPath:
     @method_cache
     def lookup(self, mtime):
         return Lookup(self)
+
+# Clear FastPath.__new__ cache when forked, avoids trying to re-useing open 
+# file pointers from zipp.Path/zipfile.Path objects in forked process
+os.register_at_fork(after_in_child=FastPath.__new__.cache_clear)
 
 
 class Lookup:
