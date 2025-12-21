@@ -861,6 +861,7 @@ class FastPath:
     def lookup(self, mtime):
         return Lookup(self)
 
+
 class Lookup:
     """
     A micro-optimized class for searching a (fast) path for metadata.
