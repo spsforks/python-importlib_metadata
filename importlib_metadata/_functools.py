@@ -102,3 +102,12 @@ def pass_none(func):
             return func(param, *args, **kwargs)
 
     return wrapper
+
+
+# From jaraco.functools 4.4
+def noop(*args, **kwargs):
+    """
+    A no-operation function that does nothing.
+
+    >>> noop(1, 2, three=3)
+    """

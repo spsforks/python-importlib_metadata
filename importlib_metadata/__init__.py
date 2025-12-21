@@ -35,7 +35,7 @@ from ._compat import (
     NullFinder,
     install,
 )
-from ._functools import method_cache, pass_none
+from ._functools import method_cache, noop, pass_none
 from ._itertools import always_iterable, bucket, unique_everseen
 from ._meta import PackageMetadata, SimplePath
 from ._typing import md_none
@@ -797,9 +797,7 @@ def _clear_after_fork(cached):
     Registering ``cache_clear`` with ``os.register_at_fork`` keeps each process
     on its own cache.
     """
-    getattr(os, 'register_at_fork', lambda **kw: None)(
-        after_in_child=cached.cache_clear,
-    )
+    getattr(os, 'register_at_fork', noop)(after_in_child=cached.cache_clear)
     return cached
 
 
