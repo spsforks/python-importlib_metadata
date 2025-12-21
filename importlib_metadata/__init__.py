@@ -787,18 +787,17 @@ class DistributionFinder(MetaPathFinder):
         """
 
 
-def _clear_lru_cache_after_fork(func):
-    """Wrap ``func`` with ``functools.lru_cache`` and clear it after ``fork``.
+def _clear_after_fork(cached):
+    """Ensure ``func`` clears cached state after ``fork`` when supported.
 
-    ``FastPath`` caches zip-backed ``pathlib.Path`` objects that keep a
+    ``FastPath`` caches zip-backed ``pathlib.Path`` objects that retain a
     reference to the parent's open ``ZipFile`` handle. Re-using a cached
     instance in a forked child can therefore resurrect invalid file pointers
     and trigger ``BadZipFile``/``OSError`` failures (python/importlib_metadata#520).
-    Registering ``cache_clear`` with ``os.register_at_fork`` ensures every
-    process gets a pristine cache and opens its own archive handles.
+    Registering ``cache_clear`` with ``os.register_at_fork`` keeps each process
+    on its own cache.
     """
 
-    cached = functools.lru_cache()(func)
     register = getattr(os, 'register_at_fork', None)
     if register is not None:
         register(after_in_child=cached.cache_clear)
@@ -821,7 +820,8 @@ class FastPath:
     True
     """
 
-    @_clear_lru_cache_after_fork
+    @_clear_after_fork
+    @functools.lru_cache()
     def __new__(cls, root):
         return super().__new__(cls)
 
