@@ -821,7 +821,7 @@ class FastPath:
     True
     """
 
-    @_clear_lru_cache_after_fork  # type: ignore[misc]
+    @_clear_lru_cache_after_fork
     def __new__(cls, root):
         return super().__new__(cls)
 
