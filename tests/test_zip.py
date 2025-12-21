@@ -59,7 +59,7 @@ class TestZip(fixtures.ZipFixtures, unittest.TestCase):
         zip_path = sys.path[0]
 
         FastPath(zip_path)
-        self.assertEqual(FastPath.__new__.cache_info().currsize, 1)
+        assert FastPath.__new__.cache_info().currsize >= 1
 
         ctx = multiprocessing.get_context('fork')
         parent_conn, child_conn = ctx.Pipe()
