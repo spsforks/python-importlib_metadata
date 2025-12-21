@@ -797,10 +797,9 @@ def _clear_after_fork(cached):
     Registering ``cache_clear`` with ``os.register_at_fork`` keeps each process
     on its own cache.
     """
-
-    register = getattr(os, 'register_at_fork', None)
-    if register is not None:
-        register(after_in_child=cached.cache_clear)
+    getattr(os, 'register_at_fork', lambda **kw: None)(
+        after_in_child=cached.cache_clear,
+    )
     return cached
 
 
