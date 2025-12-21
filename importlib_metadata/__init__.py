@@ -636,7 +636,8 @@ class Distribution(metaclass=abc.ABCMeta):
             return
 
         paths = (
-            py311.relative_fix((subdir / name).resolve())
+            py311
+            .relative_fix((subdir / name).resolve())
             .relative_to(self.locate_file('').resolve(), walk_up=True)
             .as_posix()
             for name in text.splitlines()
