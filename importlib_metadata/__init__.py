@@ -35,7 +35,7 @@ from ._compat import (
     NullFinder,
     install,
 )
-from ._functools import method_cache, noop, pass_none
+from ._functools import method_cache, noop, pass_none, passthrough
 from ._itertools import always_iterable, bucket, unique_everseen
 from ._meta import PackageMetadata, SimplePath
 from ._typing import md_none
@@ -787,6 +787,7 @@ class DistributionFinder(MetaPathFinder):
         """
 
 
+@passthrough
 def _clear_after_fork(cached):
     """Ensure ``func`` clears cached state after ``fork`` when supported.
 
@@ -798,7 +799,6 @@ def _clear_after_fork(cached):
     on its own cache.
     """
     getattr(os, 'register_at_fork', noop)(after_in_child=cached.cache_clear)
-    return cached
 
 
 class FastPath:
@@ -817,7 +817,7 @@ class FastPath:
     True
     """
 
-    @_clear_after_fork
+    @_clear_after_fork  # type: ignore[misc]
     @functools.lru_cache()
     def __new__(cls, root):
         return super().__new__(cls)
