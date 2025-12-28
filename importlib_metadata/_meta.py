@@ -7,11 +7,13 @@ from typing import (
     Protocol,
     TypeVar,
     overload,
+    runtime_checkable,
 )
 
 _T = TypeVar("_T")
 
 
+@runtime_checkable
 class PackageMetadata(Protocol):
     def __len__(self) -> int: ...  # pragma: no cover
 
@@ -71,6 +73,7 @@ class SimplePath(Protocol):
     def exists(self) -> bool: ...  # pragma: no cover
 
 
+@runtime_checkable
 class IPackagePath(Protocol):
     hash: Any | None
     size: int | None
@@ -88,6 +91,7 @@ class IPackagePath(Protocol):
     def __fspath__(self) -> str: ...  # pragma: no cover
 
 
+@runtime_checkable
 class IDistribution(Protocol):
     def read_text(
         self, filename: str | os.PathLike[str]
