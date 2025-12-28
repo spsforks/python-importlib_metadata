@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from typing import (
     Any,
     Protocol,
@@ -69,3 +69,62 @@ class SimplePath(Protocol):
     def read_bytes(self) -> bytes: ...  # pragma: no cover
 
     def exists(self) -> bool: ...  # pragma: no cover
+
+
+class IPackagePath(Protocol):
+    hash: Any | None
+    size: int | None
+    dist: IDistribution
+
+    def read_text(self, encoding: str = 'utf-8') -> str: ...  # pragma: no cover
+
+    def read_binary(self) -> bytes: ...  # pragma: no cover
+
+    def locate(self) -> SimplePath: ...  # pragma: no cover
+
+    @property
+    def parts(self) -> tuple[str, ...]: ...  # pragma: no cover
+
+    def __fspath__(self) -> str: ...  # pragma: no cover
+
+
+class IDistribution(Protocol):
+    def read_text(
+        self, filename: str | os.PathLike[str]
+    ) -> str | None: ...  # pragma: no cover
+
+    def locate_file(
+        self, path: str | os.PathLike[str]
+    ) -> SimplePath: ...  # pragma: no cover
+
+    @property
+    def metadata(self) -> PackageMetadata | None: ...  # pragma: no cover
+
+    @property
+    def name(self) -> str: ...  # pragma: no cover
+
+    @property
+    def version(self) -> str: ...  # pragma: no cover
+
+    @property
+    def entry_points(self) -> Any: ...  # pragma: no cover
+
+    @property
+    def files(self) -> list[IPackagePath] | None: ...  # pragma: no cover
+
+    @property
+    def requires(self) -> list[str] | None: ...  # pragma: no cover
+
+    @property
+    def origin(self) -> Any: ...  # pragma: no cover
+
+    @classmethod
+    def discover(
+        cls, *, context: Any | None = None, **kwargs: Any
+    ) -> Iterable[IDistribution]: ...  # pragma: no cover
+
+    @classmethod
+    def from_name(cls, name: str) -> IDistribution: ...  # pragma: no cover
+
+    @staticmethod
+    def at(path: str | os.PathLike[str]) -> IDistribution: ...  # pragma: no cover
